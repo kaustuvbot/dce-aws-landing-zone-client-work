@@ -56,9 +56,66 @@ Create a monthly budget with alerts at 50%, 80%, and 100%.
 
 Control Tower, CloudTrail, Config, S3, CloudWatch, CodeBuild, and networking resources may incur charges.
 
-### 4. Create a working administrator
+### 4. Create a temporary working administrator
 
-Use IAM Identity Center or a named IAM administrator for setup. Avoid using the root user for deployment.
+For this clean LZA lab, do **not** configure IAM Identity Center yet. The LZA prerequisites may require it to be unused before Control Tower/LZA setup.
+
+Create a temporary named IAM user for the installer, then delete or disable it after the landing zone is healthy.
+
+#### Create the user
+
+1. Open the AWS Console.
+2. Search for **IAM**.
+3. Open **IAM**.
+4. In the left menu, choose **Users**.
+5. Choose **Create user**.
+6. User name: `dce-poc-bootstrap-admin`.
+7. Select **Provide user access to the AWS Management Console**.
+8. Choose **I want to create an IAM user**.
+9. Set a strong console password.
+10. Leave **Users must create a new password at next sign-in** selected if this is a personal lab.
+11. Choose **Next**.
+
+#### Grant temporary permissions
+
+1. Choose **Attach policies directly**.
+2. Search for `AdministratorAccess`.
+3. Select **AdministratorAccess**.
+4. Choose **Next**.
+5. Review the user summary.
+6. Choose **Create user**.
+7. Copy the sign-in URL and user name to private notes.
+8. Do not put the password in the repository or screenshots.
+
+#### Enable MFA for the user
+
+1. Open the new user.
+2. Open the **Security credentials** tab.
+3. In **Multi-factor authentication**, choose **Assign MFA device**.
+4. Device name: `dce-poc-bootstrap-mfa`.
+5. Choose **Authenticator app**.
+6. Scan the QR code with an authenticator app.
+7. Enter two consecutive MFA codes.
+8. Choose **Add MFA**.
+
+#### Sign in as the working administrator
+
+1. Open a private/incognito browser window.
+2. Open the copied IAM sign-in URL.
+3. Sign in as `dce-poc-bootstrap-admin`.
+4. Complete the MFA prompt.
+5. Confirm the account ID and Region in the console header.
+6. Continue the runbook using this user, not the root user.
+
+#### Important cleanup
+
+After the LZA pipeline and landing zone are healthy:
+
+1. Sign in through the approved IAM Identity Center path once it has been configured.
+2. Open **IAM → Users → dce-poc-bootstrap-admin**.
+3. Choose **Delete user** only after confirming you have another working administrator.
+
+This temporary user is a lab bootstrap mechanism, not the target production access model.
 
 Record the administrator name, account ID, Region, and budget alert email in private notes.
 
