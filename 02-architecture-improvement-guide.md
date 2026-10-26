@@ -17,7 +17,7 @@ Use the existing AWS-style colours where possible:
 | Pink/red | Organisation, accounts, OUs, governance, security |
 | Purple/blue | Network, Direct Connect, VPN, Transit Gateway, VPCs |
 | Teal/green | Identity, logging, monitoring, evidence |
-| Orange | CI/CD, LZA, AFT, Terraform, deployment flows |
+| Existing pink/red | Management, LZA, AFT, governance, security |
 | Grey dashed | Boundary, optional item, or to-be-confirmed design |
 
 Line conventions:
@@ -39,12 +39,12 @@ Under it add:
 
 `Approved account request → governed workload account`
 
-Add an **orange dashed arrow** from AFT to:
+Add a **pink/red dashed arrow**, matching the existing management-account flow, from AFT to:
 
 - Non-production workload account(s)
 - Production workload account(s)
 
-Label the arrow in **orange**:
+Label the arrow using the existing **pink/red** flow style:
 
 `Account provisioning + baseline customisation`
 
@@ -54,7 +54,7 @@ Keep the existing bottom flow:
 
 `LZA configuration files → LZA deployment pipeline → Governed foundation`
 
-Change the pipeline label to **orange**:
+Change the pipeline label to the existing **pink/red** foundation-pipeline style:
 
 `CI/CD: validate → approve → deploy`
 
@@ -80,7 +80,7 @@ Check that the diagram shows this direction clearly:
 
 `Legacy data centres → Direct Connect → Transit Gateway → Workload VPCs`
 
-Keep VPN as a **purple dashed path** and label it:
+Keep VPN as a **purple dashed path**, matching the existing network flow, and label it:
 
 `Interim / resilience option — confirm during network discovery`
 
@@ -104,7 +104,7 @@ Keep these services visible:
 - Security Hub
 - AWS Config
 
-Add a short **pink/red** control label across the organisation boundary:
+Add a short **pink/red** control label across the organisation boundary, matching the existing governance band:
 
 `Preventive: SCPs / Control Tower controls`
 
@@ -132,7 +132,7 @@ Mark Direct Connect, DNS, break-glass access, and Entra ID integration according
 
 ## Step 8 — Add POC boundary
 
-Add an **orange dashed boundary** around the components demonstrated in the POC:
+Add a **grey dashed boundary** around the components demonstrated in the POC. Grey is already used for proposed/optional boundaries:
 
 - One governed workload account
 - Sample VPC

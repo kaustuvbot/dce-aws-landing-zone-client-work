@@ -85,3 +85,14 @@ This manages workload resources only. It must not redeploy or replace the LZA fo
 ## Diagram editing rule
 
 Do not change the core account or network model unless new customer information requires it. Improve clarity by adding the missing AFT flow, ownership labels, colours, and POC boundary.
+
+## Existing colour key
+
+Reuse the source diagram’s current palette:
+
+- **Pink/red** — organisation, accounts, OUs, governance, and security.
+- **Purple** — Direct Connect, VPN, Transit Gateway, and workload VPC networking.
+- **Blue** — Microsoft Entra ID and identity federation.
+- **Grey dashed** — proposed, optional, or to-be-confirmed scope.
+
+Use pink/red for the new AFT box and account-vending flow because AFT belongs to the management/governance layer. Do not introduce orange unless a genuinely new category needs its own visual language.
