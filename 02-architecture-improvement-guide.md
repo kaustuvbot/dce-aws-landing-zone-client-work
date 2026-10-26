@@ -8,6 +8,27 @@
 
 Make the architecture directly match the POC and demo checklist. Keep the current layout; add only missing flows and labels.
 
+## Colour coding
+
+Use the existing AWS-style colours where possible:
+
+| Colour | Use for |
+|---|---|
+| Pink/red | Organisation, accounts, OUs, governance, security |
+| Purple/blue | Network, Direct Connect, VPN, Transit Gateway, VPCs |
+| Teal/green | Identity, logging, monitoring, evidence |
+| Orange | CI/CD, LZA, AFT, Terraform, deployment flows |
+| Grey dashed | Boundary, optional item, or to-be-confirmed design |
+
+Line conventions:
+
+- Solid arrow: confirmed or demonstrated flow
+- Dashed arrow: proposed, optional, or pending approval
+- Thick boundary: AWS organisation or POC scope
+- Thin boundary: account, OU, or service grouping
+
+Use the same colour for a component and its related arrows. Keep labels dark and readable.
+
 ## Step 1 — Add account vending
 
 Place a new box in the **Management account**, beside **Landing Zone Accelerator (LZA)**:
