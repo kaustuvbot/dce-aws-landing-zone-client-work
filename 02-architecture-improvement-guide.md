@@ -39,12 +39,12 @@ Under it add:
 
 `Approved account request → governed workload account`
 
-Add a dashed arrow from AFT to:
+Add an **orange dashed arrow** from AFT to:
 
 - Non-production workload account(s)
 - Production workload account(s)
 
-Label the arrow:
+Label the arrow in **orange**:
 
 `Account provisioning + baseline customisation`
 
@@ -54,7 +54,7 @@ Keep the existing bottom flow:
 
 `LZA configuration files → LZA deployment pipeline → Governed foundation`
 
-Change the pipeline label to:
+Change the pipeline label to **orange**:
 
 `CI/CD: validate → approve → deploy`
 
@@ -80,7 +80,7 @@ Check that the diagram shows this direction clearly:
 
 `Legacy data centres → Direct Connect → Transit Gateway → Workload VPCs`
 
-Keep VPN as a secondary dashed path and label it:
+Keep VPN as a **purple dashed path** and label it:
 
 `Interim / resilience option — confirm during network discovery`
 
@@ -104,7 +104,7 @@ Keep these services visible:
 - Security Hub
 - AWS Config
 
-Add a short control label across the organisation boundary:
+Add a short **pink/red** control label across the organisation boundary:
 
 `Preventive: SCPs / Control Tower controls`
 
@@ -132,7 +132,7 @@ Mark Direct Connect, DNS, break-glass access, and Entra ID integration according
 
 ## Step 8 — Add POC boundary
 
-Add a dashed boundary around the components demonstrated in the POC:
+Add an **orange dashed boundary** around the components demonstrated in the POC:
 
 - One governed workload account
 - Sample VPC
