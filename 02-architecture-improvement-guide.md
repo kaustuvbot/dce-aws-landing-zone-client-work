@@ -2,155 +2,94 @@
 
 ## Source diagram
 
-[00-dce-lza-architecture-all-layers.drawio.svg](/home/kaustuv/Documents/ChatGPT/Deji Amazon/DCE AWS Landing Zone Client Work/Architecture and Evidence/00-dce-lza-architecture-all-layers.drawio.svg)
+[00-dce-lza-architecture-all-layers-v0.5-poc.drawio](/home/kaustuv/Documents/ChatGPT/Deji Amazon/DCE AWS Landing Zone Client Work/Architecture and Evidence/00-dce-lza-architecture-all-layers-v0.5-poc.drawio)
 
-## Goal
+## Review result
 
-Make the architecture directly match the POC and demo checklist. Keep the current layout; add only missing flows and labels.
+Most requested labels already exist in v0.5. Do not recreate them.
 
-## Colour coding
+Already present:
 
-Use the existing AWS-style colours where possible:
+- Account and OU model
+- Control Tower, SCPs, Config, CloudTrail, GuardDuty, Security Hub
+- Entra ID and IAM Identity Center
+- Direct Connect, VPN, Transit Gateway, and workload VPCs
+- LZA foundation pipeline
+- Terraform workload pipeline
+- Foundation/workload ownership boundary
+- Confirmed/proposed/optional legend
 
-| Colour | Use for |
-|---|---|
-| Pink/red | Organisation, accounts, OUs, governance, security |
-| Purple/blue | Network, Direct Connect, VPN, Transit Gateway, VPCs |
-| Teal/green | Identity, logging, monitoring, evidence |
-| Existing pink/red | Management, LZA, AFT, governance, security |
-| Grey dashed | Boundary, optional item, or to-be-confirmed design |
+## Only add these items
 
-Line conventions:
+### 1. Add AFT to the management account
 
-- Solid arrow: confirmed or demonstrated flow
-- Dashed arrow: proposed, optional, or pending approval
-- Thick boundary: AWS organisation or POC scope
-- Thin boundary: account, OU, or service grouping
-
-Use the same colour for a component and its related arrows. Keep labels dark and readable.
-
-## Step 1 — Add account vending
-
-Place a new box in the **Management account**, beside **Landing Zone Accelerator (LZA)**:
+Place a new box beside **Landing Zone Accelerator (LZA)**:
 
 `Account Factory for Terraform (AFT)`
 
-Under it add:
+Subtitle:
 
-`Approved account request → governed workload account`
+`Approved request → governed AWS account`
 
-Add a **pink/red dashed arrow**, matching the existing management-account flow, from AFT to:
+Use the existing **pink/red management/governance style**.
+
+### 2. Add the AFT account flow
+
+Draw a **pink/red dashed arrow** from AFT to:
 
 - Non-production workload account(s)
 - Production workload account(s)
 
-Label the arrow using the existing **pink/red** flow style:
+Label it:
 
 `Account provisioning + baseline customisation`
 
-## Step 2 — Clarify the foundation pipeline
+Do not add another pipeline box. The existing LZA and Terraform pipeline flows are sufficient.
 
-Keep the existing bottom flow:
+### 3. Add the POC boundary
 
-`LZA configuration files → LZA deployment pipeline → Governed foundation`
+Use a **grey dashed boundary**, matching the existing proposed/optional style, around only the items demonstrated:
 
-Change the pipeline label to the existing **pink/red** foundation-pipeline style:
-
-`CI/CD: validate → approve → deploy`
-
-Add a small note:
-
-`Foundation: LZA / AWS-native`
-
-## Step 3 — Clarify workload delivery
-
-Keep the existing workload flow:
-
-`GitHub → Terraform + controlled CI/CD → Workload deployment`
-
-Add this note below it:
-
-`Workload IaC only — does not deploy LZA`
-
-This prevents confusion between platform ownership and migration-team ownership.
-
-## Step 4 — Improve the network flow
-
-Check that the diagram shows this direction clearly:
-
-`Legacy data centres → Direct Connect → Transit Gateway → Workload VPCs`
-
-Keep VPN as a **purple dashed path**, matching the existing network flow, and label it:
-
-`Interim / resilience option — confirm during network discovery`
-
-Add a small box inside **Shared Services account**:
-
-`Central DNS / resolver services`
-
-Only keep this if DNS is part of the proposed POC; otherwise label it `To be confirmed`.
-
-## Step 5 — Make security ownership clear
-
-Inside the **Security OU**, label the Audit account:
-
-`Delegated security administration`
-
-Keep these services visible:
-
-- CloudTrail
-- Central S3 log archive
-- GuardDuty
-- Security Hub
-- AWS Config
-
-Add a short **pink/red** control label across the organisation boundary, matching the existing governance band:
-
-`Preventive: SCPs / Control Tower controls`
-
-`Detective: Config / GuardDuty / Security Hub`
-
-## Step 6 — Add identity and emergency access notes
-
-Keep the Entra ID → IAM Identity Center flow.
-
-Add below the break-glass box:
-
-`Separate emergency access — approval and procedure required`
-
-Do not claim that the break-glass design is final.
-
-## Step 7 — Update the legend
-
-Use three categories:
-
-- Confirmed customer requirement
-- Proposed POC design
-- To be confirmed during discovery
-
-Mark Direct Connect, DNS, break-glass access, and Entra ID integration according to their actual status.
-
-## Step 8 — Add POC boundary
-
-Add a **grey dashed boundary** around the components demonstrated in the POC. Grey is already used for proposed/optional boundaries:
-
-- One governed workload account
-- Sample VPC
-- Transit Gateway attachment
-- LZA pipeline
+- LZA configuration and deployment pipeline
 - AFT account-vending flow
-- Central logging/security evidence
+- One governed workload account
+- Sample workload VPC and TGW attachment
+- Central logging and security evidence
 - Terraform workload deployment
 
-Label it:
+Label the boundary:
 
 `POC scope — validates the platform pattern, not production migration at scale`
 
-## Final review
+### 4. Check existing arrows only
 
-- AFT is visible.
-- Pipeline ownership is unambiguous.
-- Network arrows are readable.
-- Security services have a central owner.
-- POC scope is visibly smaller than the target state.
-- No component is presented as production-ready without evidence.
+Do not redraw the network or security flows. Confirm that these existing paths remain readable:
+
+`Legacy data centres → Direct Connect → Transit Gateway → Workload VPCs`
+
+`CloudTrail → S3 central audit logs`
+
+`GuardDuty → Security Hub`
+
+`GitHub → Terraform + controlled CI/CD → Workload deployment`
+
+If a line is hard to read, adjust its position only; keep its current colour and meaning.
+
+## Colour rule
+
+Reuse the source diagram palette:
+
+- **Pink/red** — organisation, accounts, governance, security, AFT
+- **Purple** — networking and workload VPC flows
+- **Blue** — Entra ID and identity federation
+- **Grey dashed** — proposed, optional, or POC boundaries
+
+Do not introduce orange or new colours.
+
+## Final check
+
+- AFT is visible and connected to both workload OUs.
+- POC scope is visibly smaller than the target architecture.
+- Existing labels appear only once.
+- Existing arrows retain their original colours.
+- The diagram does not claim that the full production platform is complete.
