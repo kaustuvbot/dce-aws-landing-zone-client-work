@@ -169,7 +169,17 @@ Find:
 
 `AWSAccelerator-Pipeline`
 
-### 14. Compare the stages with the client reference
+### 14. Identify the configuration source
+
+Open the pipeline and inspect the **Source** action.
+
+- If it shows **CodeCommit**, open the linked repository from the action.
+- If it shows **GitHub**, open the linked repository and branch.
+- Use the repository and branch created by your installer; do not assume it matches the client’s repository name.
+
+The client evidence shows a CodeCommit repository named `aws-accelerator-config`. Your new lab may use a different repository depending on the LZA template version and source settings.
+
+### 15. Compare the stages with the client reference
 
 The exact stage names may vary by LZA version. Confirm that the pipeline contains equivalent foundation stages for:
 
@@ -185,7 +195,7 @@ The exact stage names may vary by LZA version. Confirm that the pipeline contain
 
 Do not rename generated stages just to match the screenshot.
 
-### 15. Wait for the first execution
+### 16. Wait for the first execution
 
 - Open the execution details.
 - Wait for all applicable stages to finish.
@@ -204,9 +214,81 @@ Capture:
 - Successful execution
 - One action detail showing the deployment completed
 
-## Phase 6 — Validate the landing zone
+## Phase 6 — Edit the LZA configuration repository
 
-### 16. Open Control Tower
+This is the main hands-on part of the lab. Edit the configuration repository; do not edit generated pipeline code.
+
+### 17. Find the configuration files
+
+The repository normally contains files similar to:
+
+```text
+accounts-config.yaml
+global-config.yaml
+iam-config.yaml
+network-config.yaml
+organization-config.yaml
+security-config.yaml
+```
+
+The exact names may vary by LZA version. Use the files present in your generated repository as the source of truth.
+
+### 18. Understand file ownership
+
+| File | Purpose | First-lab action |
+|---|---|---|
+| `organization-config.yaml` | OUs and organisation settings | Read only |
+| `accounts-config.yaml` | Account definitions and placement | Read only |
+| `global-config.yaml` | Regions, tags, and global settings | Use for one safe change |
+| `iam-config.yaml` | Roles and permission sets | Read only |
+| `network-config.yaml` | VPCs, TGW, and network settings | Read only |
+| `security-config.yaml` | Guardrails and security services | Read only |
+
+Do not copy the client’s account IDs, email addresses, CIDRs, or environment names into your lab.
+
+### 19. Make one safe configuration change
+
+Use the syntax already supplied in your generated repository.
+
+Preferred first change:
+
+- Add or update a non-sensitive project tag only if the existing file already contains a valid tag block.
+- Keep the existing YAML structure and indentation.
+- Change one value only.
+- Do not change account IDs, Regions, OUs, SCPs, CIDRs, IAM permissions, or security controls.
+
+If no safe tag or metadata field exists, do not invent one. Use the initial successful run as the configuration demonstration and record `No safe configuration change made`.
+
+### 20. Commit the change
+
+For **CodeCommit**:
+
+1. Open **Developer Tools → CodeCommit → Repositories**.
+2. Open the repository linked in the pipeline Source action.
+3. Select the target branch.
+4. Open the configuration file and choose **Edit**.
+5. Make the single safe change.
+6. Commit with a message such as `POC: add DCE demo project tag`.
+
+For **GitHub**, edit the linked repository and branch shown in the Source action, then create a branch or pull request.
+
+### 21. Release and validate the pipeline
+
+1. Open **CodePipeline → `AWSAccelerator-Pipeline`**.
+2. Confirm a new execution appears.
+3. If automatic triggering is disabled, choose **Release change**.
+4. Wait for every applicable stage to complete.
+5. Capture the source revision, stage results, and final status.
+
+The proof is:
+
+`Repository change → pipeline execution → governed foundation result`
+
+If the pipeline fails, capture the first failed action, revert the last change, and rerun only after the configuration is valid. Do not edit generated CloudFormation, CodeBuild, or Control Tower resources to force a green pipeline.
+
+## Phase 7 — Validate the landing zone
+
+### 22. Open Control Tower
 
 Confirm:
 
@@ -216,7 +298,7 @@ Confirm:
 - Audit account exists.
 - Foundation/Sandbox or workload OU exists.
 
-### 17. Open Organizations
+### 23. Open Organizations
 
 Confirm that accounts and OUs match the architecture at a minimum:
 
@@ -226,7 +308,7 @@ Confirm that accounts and OUs match the architecture at a minimum:
 - Audit account
 - Infrastructure/workload area as created by the selected configuration
 
-### 18. Validate security and logging
+### 24. Validate security and logging
 
 Check:
 
@@ -237,20 +319,6 @@ Check:
 - Control Tower controls/compliance view
 
 Capture evidence without exposing sensitive data.
-
-## Phase 7 — Make one safe pipeline change
-
-Only after the first run is healthy:
-
-1. Open the generated LZA configuration repository.
-2. Create a branch.
-3. Make one harmless, documented configuration change.
-4. Open a pull request or use the approved review method.
-5. Run validation.
-6. Approve and release the pipeline.
-7. Capture the second successful execution.
-
-Do not change SCPs, Regions, account emails, networking CIDRs, or security controls for the first test.
 
 ## Phase 8 — Account vending demonstration
 
