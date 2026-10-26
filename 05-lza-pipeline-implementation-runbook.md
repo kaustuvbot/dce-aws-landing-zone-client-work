@@ -12,6 +12,12 @@ Expected pipeline name:
 
 This runbook creates the foundation pipeline. It does not create the customer’s complete production platform or migrate servers.
 
+## Execution order
+
+Follow the phases in this order:
+
+`Bootstrap access → Prepare account → Launch LZA → Verify landing zone → Verify pipeline → Edit configuration → Capture demo evidence`
+
 ## Phase 0 — Confirm the account is clean
 
 Use the AWS Management Console in the new AWS account.
@@ -166,7 +172,9 @@ Check:
 
 If the applied quota is below 3, request an increase before continuing.
 
-## Phase 4 — Launch the official LZA installer
+## Phase 4 — Launch the official LZA installer and landing zone
+
+This is the main landing-zone setup step. Do not launch a separate manual Control Tower landing zone first. In this path, the LZA installer is configured to create and manage Control Tower.
 
 ### 9. Open the official LZA implementation guide
 
@@ -174,35 +182,59 @@ Use the current AWS solution documentation and choose the official **AWSAccelera
 
 Do not download or modify the installer template.
 
-### 10. Launch CloudFormation
+### 10. Open CloudFormation in the home Region
+
+1. Sign in as `dce-poc-bootstrap-admin`.
+2. At the top-right of the AWS Console, choose **Europe (London) `eu-west-2`**.
+3. Search for **CloudFormation**.
+4. Open **CloudFormation**.
+5. Confirm the Region selector still shows `eu-west-2`.
+
+### 11. Launch the installer stack
 
 Console: **CloudFormation → Create stack → With new resources**
 
-- Use the official LZA installer template URL.
-- Confirm the Region is `eu-west-2`.
-- Choose **Next**.
+1. Choose **Create stack**.
+2. Select **With new resources (standard)**.
+3. For **Template source**, select **Amazon S3 URL**.
+4. Paste the official `AWSAccelerator-InstallerStack` template URL from the AWS LZA implementation guide.
+5. Choose **Next**.
+6. Enter a stack name such as `dce-poc-lza-installer`.
+7. Choose **Next**.
 
-### 11. Enter installer parameters
+### 12. Enter installer parameters
 
-Use the current template’s parameter names. For this POC, select values equivalent to:
+Use the current template’s parameter names. The names can change between LZA releases. For this POC, select values equivalent to:
 
-- Home Region: `eu-west-2`
-- Control Tower integration: enabled
-- Control Tower deployment: enabled for a clean organisation
-- GitHub token secret: `accelerator/github-token`
-- Deployment Regions: `eu-west-2` initially
-- Repository and branch: use the template defaults unless the client has specified otherwise
+ - Home Region: `eu-west-2`
+ - Control Tower integration: enabled
+ - Control Tower deployment: enabled for a clean organisation
+ - GitHub token secret: `accelerator/github-token`, if requested by the template
+ - Deployment Regions: `eu-west-2` initially
+ - Repository and branch: use the template defaults unless the client has specified otherwise
 
 Do not invent account IDs, OUs, Regions, or email addresses. Use the values displayed by the template.
 
-### 12. Configure stack options
+### 13. Configure stack options
 
-- Add tags such as `Project=DCE-POC` and `Owner=<your-name>`.
-- Keep rollback enabled.
-- Review IAM capability acknowledgements.
-- Submit the stack.
+1. Choose **Next**.
+2. Add tags such as `Project=DCE-POC` and `Owner=<your-name>`.
+3. Keep rollback enabled.
+4. Choose **Next**.
+5. Review the IAM capability acknowledgements.
+6. Select the acknowledgement checkboxes required by the template.
+7. Choose **Submit** or **Create stack**.
 
-Wait for `CREATE_COMPLETE`.
+### 14. Wait for the landing zone to be created
+
+1. Open the **Events** tab.
+2. Wait for the installer stack to reach `CREATE_COMPLETE`.
+3. Open **Outputs** and record the pipeline and repository values.
+4. Search for **Control Tower** in the console.
+5. Open **Control Tower** in `eu-west-2`.
+6. Wait for the landing-zone status to become **Ready** or **Healthy**.
+
+The installer may create the Control Tower landing zone, Log Archive account, Audit account, OUs, CloudTrail, Config, and the LZA pipeline. This can take a significant amount of time.
 
 If the stack fails, open the **Events** tab, record the first meaningful failure, and stop. Do not repeatedly rerun the installer.
 
@@ -218,7 +250,7 @@ Capture:
 
 ## Phase 5 — Validate the generated LZA pipeline
 
-### 13. Open CodePipeline
+### 15. Open CodePipeline
 
 Console: **Developer Tools → CodePipeline**
 
