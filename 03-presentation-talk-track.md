@@ -14,29 +14,79 @@ Use the existing architecture as the main visual. Explain the customer-owned are
 
 > AWS Organizations and Control Tower provide the account structure and baseline governance. Security, infrastructure, non-production, and production responsibilities are separated into OUs and accounts.
 
+Focus on:
+
+- Separation of duties
+- Stronger production controls
+- No workloads in the management account
+- Repeatable account structure for migration waves
+
 ### 2. Security and logging
 
 > CloudTrail and central logging provide audit evidence. GuardDuty and Security Hub provide centralised threat detection and security posture visibility. SCPs, Control Tower controls, and Config rules provide preventative and detective controls.
+
+Focus on:
+
+- Central visibility across accounts
+- Preventive controls before deployment
+- Detective controls after deployment
+- Evidence for audit and incident response
 
 ### 3. Identity — customer-owned
 
 > Workforce identity is expected to come from Microsoft Entra ID through IAM Identity Center using SAML federation and SCIM. The customer owns the directory, user lifecycle, groups, and access approvals. The platform team integrates with the approved customer pattern.
 
+Focus on:
+
+- Customer retains identity ownership
+- Access is role-based, not shared administrator access
+- Permission sets control account access
+- Integration details remain subject to customer discovery
+
 ### 4. Network and hybrid connectivity
 
 > The proposed migration path is from the legacy data centres through Direct Connect and Transit Gateway to workload VPCs. VPN remains an interim or resilience option, subject to network discovery and customer approval.
+
+Focus on:
+
+- Central network hub
+- Repeatable VPC attachment pattern
+- Connectivity supports migration waves
+- Direct Connect and VPN design still require validation
 
 ### 5. Foundation pipeline
 
 > LZA configuration is version-controlled and deployed through the foundation pipeline. This pipeline manages the AWS foundation: accounts, controls, network, and security.
 
+Focus on:
+
+- Changes are reviewed before deployment
+- Foundation configuration is repeatable
+- Platform changes are traceable
+- LZA owns the foundation lifecycle
+
 ### 6. Workload delivery — customer-owned
 
 > Migration teams own their GitLab or GitHub repositories and Terraform code. Their controlled CI/CD pipeline deploys workload resources into governed accounts. It does not manage or replace the LZA foundation.
 
+Focus on:
+
+- Teams can move at wave speed within guardrails
+- Workload deployment is separate from platform deployment
+- Customer teams retain application and repository ownership
+- Terraform is governed by the platform, not used to bypass it
+
 ## Key message to repeat
 
 > The platform team governs the foundation; customer and migration teams consume it to deploy workloads.
+
+## What the audience should remember
+
+- Secure-by-default account structure
+- Central security and audit visibility
+- Controlled self-service for migration teams
+- Clear ownership boundaries
+- A repeatable pattern that can scale across migration waves
 
 ## Keep these items verbal
 
