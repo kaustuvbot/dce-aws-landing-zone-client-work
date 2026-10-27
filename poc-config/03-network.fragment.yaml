@@ -1,0 +1,165 @@
+# DCE POC - network-config.yaml merge fragment
+# Merge semantics: supply ONLY the `transitGateways` and `vpcs` arrays shown
+# below. Preserve all other generated network keys (defaultVpc, endpointPolicies,
+# homeRegion, centralNetworkServices, etc.) and append to any existing entries in
+# the supplied arrays only after reviewing conflicts. The walkthrough assumes both
+# arrays are empty; stop for review if an existing network is already configured.
+transitGateways:
+  - name: DCE-POC-TGW
+    account: Network
+    region: eu-west-2
+    asn: 64512
+    dnsSupport: enable
+    vpnEcmpSupport: enable
+    defaultRouteTableAssociation: disable
+    defaultRouteTablePropagation: disable
+    # The only permitted RAM consumer is our own NonProduction account.
+    autoAcceptSharingAttachments: enable
+    # RAM share: only the non-production workload account consumes the TGW.
+    shareTargets:
+      accounts:
+        - NonProduction
+    routeTables:
+      # Explicit TGW route table. Both VPCs (source and destination) attach to
+      # this TGW, but the TGW route table holds no static routes: the traffic
+      # between the two VPCs is driven purely by the VPC route tables below
+      # (no peered TGW / VPN / DX gateway in this POC).
+      - name: DCE-POC-RT
+        routes: []
+vpcs:
+  - name: DCE-POC-VPC
+    account: NonProduction
+    region: eu-west-2
+    cidrs:
+      - 10.20.0.0/16
+    enableDnsSupport: true
+    enableDnsHostnames: true
+    internetGateway: false
+    # No internet gateway, no NAT gateways, no VPC endpoints, and no default-VPC
+    # deletion requested for this POC.
+    subnets:
+      - name: DCE-POC-SN-APP-A
+        availabilityZone: a
+        ipv4CidrBlock: 10.20.0.0/24
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-RT-APP-A
+      - name: DCE-POC-SN-APP-B
+        availabilityZone: b
+        ipv4CidrBlock: 10.20.1.0/24
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-RT-APP-B
+      - name: DCE-POC-SN-TGW-A
+        availabilityZone: a
+        ipv4CidrBlock: 10.20.254.0/28
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-RT-TGW-A
+      - name: DCE-POC-SN-TGW-B
+        availabilityZone: b
+        ipv4CidrBlock: 10.20.254.16/28
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-RT-TGW-B
+    routeTables:
+      # Two-VPC datapath: the destination VPC (10.20.0.0/16) reaches the source
+      # VPC (10.10.0.0/16) over the TGW. The TGW subnet route tables stay
+      # empty - the TGW route table is the transit point, not a router of
+      # static prefixes.
+      - name: DCE-POC-RT-APP-A
+        routes:
+          - name: nameToSource
+            destination: 10.10.0.0/16
+            type: transitGateway
+            target: DCE-POC-TGW
+      - name: DCE-POC-RT-APP-B
+        routes:
+          - name: nameToSource
+            destination: 10.10.0.0/16
+            type: transitGateway
+            target: DCE-POC-TGW
+      - name: DCE-POC-RT-TGW-A
+        routes: []
+      - name: DCE-POC-RT-TGW-B
+        routes: []
+    transitGatewayAttachments:
+      - name: DCE-POC-TGW-ATTACH
+        transitGateway:
+          name: DCE-POC-TGW
+          account: Network
+        subnets:
+          - DCE-POC-SN-TGW-A
+          - DCE-POC-SN-TGW-B
+        # Explicit association and propagation to the single TGW route table.
+        routeTableAssociations:
+          - DCE-POC-RT
+        routeTablePropagations:
+          - DCE-POC-RT
+  # ---------------------------------------------------------------------------
+  # Source VPC: DCE-POC-SOURCE-VPC (10.10.0.0/16, eu-west-2) in the NETWORK
+  # account - the same account that owns DCE-POC-TGW, so this attachment needs
+  # no RAM share. It mirrors the destination VPC shape (2 app subnets + 2 TGW
+  # subnets across 2 AZs) and represents the disposable "legacy" side of the
+  # migration demo.
+  # ---------------------------------------------------------------------------
+  - name: DCE-POC-SOURCE-VPC
+    account: Network
+    region: eu-west-2
+    cidrs:
+      - 10.10.0.0/16
+    enableDnsSupport: true
+    enableDnsHostnames: true
+    internetGateway: false
+    # No internet gateway, no NAT gateways, no VPC endpoints, and no default-VPC
+    # deletion requested for this POC.
+    subnets:
+      - name: DCE-POC-SOURCE-SN-APP-A
+        availabilityZone: a
+        ipv4CidrBlock: 10.10.0.0/24
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-SOURCE-RT-APP-A
+      - name: DCE-POC-SOURCE-SN-APP-B
+        availabilityZone: b
+        ipv4CidrBlock: 10.10.1.0/24
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-SOURCE-RT-APP-B
+      - name: DCE-POC-SOURCE-SN-TGW-A
+        availabilityZone: a
+        ipv4CidrBlock: 10.10.254.0/28
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-SOURCE-RT-TGW-A
+      - name: DCE-POC-SOURCE-SN-TGW-B
+        availabilityZone: b
+        ipv4CidrBlock: 10.10.254.16/28
+        mapPublicIpOnLaunch: false
+        routeTable: DCE-POC-SOURCE-RT-TGW-B
+    routeTables:
+      # Two-VPC datapath: the source VPC (10.10.0.0/16) reaches the
+      # destination VPC (10.20.0.0/16) over the TGW. The TGW subnet route
+      # tables stay empty - no static prefixes are routed in the VPC.
+      - name: DCE-POC-SOURCE-RT-APP-A
+        routes:
+          - name: nameToDestination
+            destination: 10.20.0.0/16
+            type: transitGateway
+            target: DCE-POC-TGW
+      - name: DCE-POC-SOURCE-RT-APP-B
+        routes:
+          - name: nameToDestination
+            destination: 10.20.0.0/16
+            type: transitGateway
+            target: DCE-POC-TGW
+      - name: DCE-POC-SOURCE-RT-TGW-A
+        routes: []
+      - name: DCE-POC-SOURCE-RT-TGW-B
+        routes: []
+    transitGatewayAttachments:
+      - name: DCE-POC-SOURCE-TGW-ATTACH
+        transitGateway:
+          name: DCE-POC-TGW
+          account: Network
+        subnets:
+          - DCE-POC-SOURCE-SN-TGW-A
+          - DCE-POC-SOURCE-SN-TGW-B
+        # Explicit association and propagation to the single TGW route table.
+        routeTableAssociations:
+          - DCE-POC-RT
+        routeTablePropagations:
+          - DCE-POC-RT

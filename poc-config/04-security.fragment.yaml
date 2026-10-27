@@ -1,0 +1,51 @@
+# DCE POC - security-config.yaml merge fragment
+# Merge semantics: supply ONLY the `centralSecurityServices` key shown below.
+# Preserve every other generated security key (awsConfig, cloudWatch,
+# iamPasswordPolicy, keyManagementService, resourcePolicyEnforcement, etc.) and
+# preserve the other `centralSecurityServices` sub-keys (ebsDefaultVolumeEncryption,
+# s3PublicAccessBlock, ssmAutomation, ...) exactly as generated.
+#
+# Region scoping: the POC enables only eu-west-2 (London). Every other enabled
+# region must appear in the `excludeRegions` lists below, otherwise GuardDuty and
+# Security Hub would be enabled in regions the POC does not cover.
+centralSecurityServices:
+  delegatedAdminAccount: Audit
+  guardduty:
+    enable: true
+    excludeRegions:
+      - us-east-1
+    s3Protection:
+      enable: false
+      excludeRegions:
+        - us-east-1
+    exportConfiguration:
+      enable: false
+      destinationType: S3
+      exportFrequency: FIFTEEN_MINUTES
+    ec2Protection:
+      enable: false
+      keepSnapshots: false
+      excludeRegions:
+        - us-east-1
+    rdsProtection:
+      enable: false
+      excludeRegions:
+        - us-east-1
+    lambdaProtection:
+      enable: false
+      excludeRegions:
+        - us-east-1
+    eksProtection:
+      enable: false
+      excludeRegions:
+        - us-east-1
+    s3MalwareProtection:
+      enable: false
+  securityHub:
+    enable: true
+    excludeRegions:
+      - us-east-1
+    regionAggregation: false
+    standards:
+      - name: AWS Foundational Security Best Practices v1.0.0
+        enable: true

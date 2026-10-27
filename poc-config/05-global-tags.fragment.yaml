@@ -1,0 +1,9 @@
+# DCE POC - global-config.yaml merge fragment
+# Merge semantics: supply ONLY the `tags` array shown below. Preserve every
+# other generated global key (homeRegion, enabledRegions, controlTower, logging,
+# s3, snsTopics, ...) and preserve any other tags already present in the array.
+tags:
+  - key: Project
+    value: DCE-POC
+  - key: DemoRevision
+    value: "1"

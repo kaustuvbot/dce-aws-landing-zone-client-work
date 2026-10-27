@@ -1,0 +1,8 @@
+# DCE POC - organization-config.yaml merge fragment
+# Merge semantics: this file supplies ONLY the keys shown below. Merge it into the
+# generated organization-config.yaml, preserving every other generated key
+# (enable, serviceControlPolicies, taggingPolicies, backupPolicies, etc.) and
+# preserving any other entries already present in the `organizationalUnits` array.
+organizationalUnits:
+  - name: Infrastructure
+  - name: Non-Production

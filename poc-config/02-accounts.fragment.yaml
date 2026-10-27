@@ -1,0 +1,22 @@
+# DCE POC - accounts-config.yaml merge fragment
+# Merge semantics: supply ONLY the `workloadAccounts` array shown below. Keep the
+# generated `mandatoryAccounts` array and any other generated keys untouched, and
+# append these entries to the existing `workloadAccounts` array (do not replace
+# the array wholesale unless it is empty).
+#
+# NOTE: the e-mail addresses below are placeholders using the reserved
+# .invalid TLD (RFC 2606). They MUST be replaced with real, unique account
+# root e-mail addresses in AWS before the pipeline runs - AWS requires a
+# deliverable address for every new account. Do not rely on AWS to reject a
+# placeholder: check both addresses yourself before committing or releasing.
+workloadAccounts:
+  - name: Network
+    description: Shared networking hub account hosting the DCE POC transit gateway.
+    email: replace-network@example.invalid
+    organizationalUnit: Infrastructure
+    warm: false
+  - name: NonProduction
+    description: Non-production workload account hosting the DCE POC VPC.
+    email: replace-nonproduction@example.invalid
+    organizationalUnit: Non-Production
+    warm: false
