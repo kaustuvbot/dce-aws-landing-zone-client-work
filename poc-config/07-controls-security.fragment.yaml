@@ -1,0 +1,17 @@
+# Append this rule set under security-config.yaml awsConfig.ruleSets.
+# Preserve the existing recorder settings: Control Tower owns the recorder.
+awsConfig:
+  ruleSets:
+    - deploymentTargets:
+        accounts:
+          - NonProduction
+        excludedRegions:
+          - us-east-1
+      rules:
+        - name: dce-poc-required-project-tag
+          description: Detect a missing Project tag on lab EC2 instances.
+          identifier: REQUIRED_TAGS
+          inputParameters:
+            tag1Key: Project
+          complianceResourceTypes:
+            - AWS::EC2::Instance

@@ -1,0 +1,11 @@
+# Append this definition to organization-config.yaml serviceControlPolicies.
+# Preserve existing controls. Upload the referenced JSON before releasing.
+serviceControlPolicies:
+  - name: DCE-POC-DenyCreateUser
+    description: Prevent IAM user creation in the disposable Non-Production OU.
+    policy: service-control-policies/dce-poc-deny-create-user.json
+    type: customerManaged
+    strategy: deny-list
+    deploymentTargets:
+      organizationalUnits:
+        - Non-Production
