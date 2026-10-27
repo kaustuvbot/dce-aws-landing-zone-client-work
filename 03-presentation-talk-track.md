@@ -4,6 +4,8 @@
 
 Use the existing architecture as the main visual. Explain the customer-owned areas verbally instead of adding more diagram detail.
 
+These talking points describe the target design. During the demo, distinguish it from the smaller deployed lab in [04](04-poc-scope-and-design.md). In LZA 1.16.3, manual review follows Prepare, Accounts and Bootstrap; do not describe it as approval before every infrastructure change.
+
 ## Opening message
 
 > The design establishes a governed AWS foundation for a large-scale data-centre exit. It separates central platform controls from workload delivery so migration teams can work safely and repeatedly.
@@ -79,6 +81,19 @@ Focus on:
 ## Key message to repeat
 
 > The platform team governs the foundation; customer and migration teams consume it to deploy workloads.
+
+## What to show in the expanded POC
+
+- **Accounts:** Network owns the hub; NonProduction represents one migration-team account.
+- **Network:** show the TGW RAM share, VPC attachment, route-table association and propagated CIDR.
+- **Security:** show actual London GuardDuty/Security Hub administrator and member status after deployment.
+- **Automation:** match each successful execution to its CodeCommit revision, then show the tag change.
+- **Migration/test:** show private transfer between two EC2 instances across TGW, matching
+  data, a successful application request, route failure/recovery and preventive/detective tests.
+- **Limits:** AWS-hosted source simulation, no real on-premises connection; no scale or compliance proof.
+
+Use [05a](05a-poc-configuration-and-network-demo.md) for the evidence checklist. Only describe
+components as deployed after verifying them; the diagram also contains talk-through items.
 
 ## What the audience should remember
 

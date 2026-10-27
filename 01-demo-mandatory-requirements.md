@@ -1,5 +1,33 @@
 # 01 — Demo Mandatory Requirements
 
+> Current scope: use [05 — LZA lab](05-lza-pipeline-implementation-runbook.md) and
+> [05a — POC configuration](05a-poc-configuration-and-network-demo.md). The lab now includes
+> a Network account, NonProduction account, TGW attachment, private VPC and London security
+> services. Terraform, GitLab, Entra ID, AFT, Direct Connect and VPN remain talk-through.
+
+## Current POC pass checklist
+
+- Five accounts visible; new accounts enrolled and in the intended OUs.
+- Successful LZA executions tied to the intended configuration commits.
+- TGW in Network; RAM share limited to NonProduction.
+- Private two-AZ VPCs in both Network (source `10.10.0.0/16`) and NonProduction (target
+  `10.20.0.0/16`); both attachments available; TGW association and CIDR propagation visible.
+- London GuardDuty/Security Hub delegated administrator and member status verified.
+- Recent CloudTrail delivery from a member account into central log storage.
+- Revision tag change verified on an actual downstream resource.
+- Evidence captured, deployment limits stated, teardown resources inventoried.
+
+Also complete [05b](05b-workload-migration-and-testing.md): source-to-target migration
+through TGW, route failure/recovery, data checksum and persistence, SCP denial and Config
+noncompliance/remediation. Two EC2 instances and private SSM endpoints are now in scope.
+Do not substitute a simulation for a passing checkpoint; the source is explicitly an
+AWS-hosted legacy simulation, not a real on-premises server.
+
+## Historical programme checklist — not instructions for this lab
+
+Everything below records the original wider request. It does not add mandatory AFT,
+Terraform, policy-violation testing or workload deployment to the current POC.
+
 ## Purpose
 
 Prove that the proposed AWS platform can govern accounts, deploy safely, and support a migration workload.

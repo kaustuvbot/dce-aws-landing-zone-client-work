@@ -1,5 +1,7 @@
 # 02 — Architecture Improvement Guide
 
+> On hold following the client's instruction to use the existing diagram. This is historical editing guidance, not a prerequisite for [05 — the LZA lab](05-lza-pipeline-implementation-runbook.md). No further diagram changes are required for the current demo.
+
 ## Source diagram
 
 [00-dce-lza-architecture-all-layers-v0.5-poc.drawio](/home/kaustuv/Documents/ChatGPT/Deji Amazon/DCE AWS Landing Zone Client Work/Architecture and Evidence/00-dce-lza-architecture-all-layers-v0.5-poc.drawio)
